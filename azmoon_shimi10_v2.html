@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آزمون آنلاین شیمی دهم - دپارتمان کیمیای توس (استاد علیرضا رضایی)</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --secondary: #0f766e;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #cbd5e1;
+            --success: #15803d;
+            --success-bg: #dcfce7;
+            --danger: #b91c1c;
+            --danger-bg: #fee2e2;
+        }
+        * { box-sizing: border-box; font-family: Tahoma, 'Vazirmatn', 'Segoe UI', sans-serif; }
+        body {
+            margin: 0; padding: 20px; background-color: var(--bg); color: var(--text);
+            line-height: 1.75;
+        }
+        .container { max-width: 920px; margin: 0 auto; }
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; padding: 24px 28px; border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 20px;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px;
+        }
+        header h1 { margin: 0; font-size: 1.3rem; }
+        header p { margin: 5px 0 0; font-size: 0.9rem; opacity: 0.92; }
+        .timer-box {
+            font-size: 1.1rem; font-weight: bold; color: #1e3a8a;
+            background: #ffffff; padding: 10px 18px; border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .timer-box.urgent { background: #fee2e2; color: #b91c1c; animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0.7; } }
+        .card {
+            background: var(--card); border-radius: 14px; padding: 22px;
+            margin-bottom: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            border: 1px solid #e2e8f0;
+        }
+        .student-form {
+            display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end;
+        }
+        @media (max-width: 650px) { .student-form { grid-template-columns: 1fr; } }
+        .form-group { margin-bottom: 0; }
+        .form-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.88rem; color: var(--primary); }
+        .form-control {
+            width: 100%; padding: 10px 12px; border: 1.5px solid var(--border);
+            border-radius: 8px; font-size: 0.95rem;
+        }
+        .toolbar {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;
+            background: var(--card); padding: 14px 18px; border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); align-items: center; justify-content: space-between;
+        }
+        .btn {
+            padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 0.9rem; font-weight: bold; transition: 0.2s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: #172554; }
+        .btn-secondary { background: var(--secondary); color: white; }
+        .btn-secondary:hover { background: #115e59; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-outline { background: transparent; border: 1.5px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: #eff6ff; }
+        .btn-danger { background: var(--danger); color: white; padding: 5px 10px; font-size: 0.8rem; }
+        .q-header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
+            margin-bottom: 12px; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;
+        }
+        .q-badge {
+            background: #e0f2fe; color: #0369a1; padding: 3px 10px;
+            border-radius: 20px; font-size: 0.8rem; font-weight: bold;
+        }
+        .q-source {
+            background: #fef3c7; color: #92400e; padding: 2px 9px;
+            border-radius: 12px; font-size: 0.78rem; font-weight: bold;
+        }
+        .q-text { font-size: 1.04rem; font-weight: bold; margin-bottom: 16px; }
+        .options-list { display: flex; flex-direction: column; gap: 10px; }
+        .option-item {
+            display: flex; align-items: center; gap: 10px; padding: 12px 15px;
+            border: 1.5px solid var(--border); border-radius: 10px; cursor: pointer;
+            transition: 0.15s; background: #fafafa;
+        }
+        .option-item:hover { border-color: var(--primary-light); background: #f8fafc; }
+        .option-item input[type="radio"] { transform: scale(1.2); accent-color: var(--primary); }
+        .option-item.correct-ans { background: var(--success-bg); border-color: var(--success); color: var(--success); font-weight: bold; }
+        .option-item.wrong-ans { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+        .short-input {
+            width: 100%; max-width: 300px; padding: 10px 14px; font-size: 1rem;
+            border: 1.5px solid var(--border); border-radius: 8px; direction: ltr; text-align: center;
+        }
+        .explanation {
+            margin-top: 15px; padding: 14px; border-radius: 10px;
+            background: #f8fafc; border-right: 4px solid var(--secondary);
+            font-size: 0.92rem; display: none;
+        }
+        .explanation.show { display: block; }
+        #addPanel, #settingsPanel { display: none; border: 2px solid var(--secondary); background: #f0fdfa; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+        #resultBox {
+            display: none; background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+            border: 2px solid var(--primary-light);
+        }
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px; margin: 15px 0;
+        }
+        .stat-card {
+            background: white; padding: 14px; border-radius: 10px; text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .stat-val { font-size: 1.4rem; font-weight: bold; color: var(--primary); }
+        .stat-lbl { font-size: 0.8rem; color: var(--muted); }
+        .report-box {
+            background: #fff; border: 1.5px dashed var(--primary); padding: 15px;
+            border-radius: 10px; margin-top: 15px;
+        }
+        sub, sup { font-size: 0.75em; line-height: 0; }
+        .teacher-only { display: inline-flex; }
+        body.student-mode .teacher-only { display: none !important; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>آزمون آنلاین شیمی دهم (فصل اول تا ابتدای مدل کوانتومی)</h1>
+            <p>برگرفته از جزوه طبقه‌بندی کنکور استاد علیرضا رضایی و سوالات تالیفی</p>
+        </div>
+        <div class="timer-box" id="timerDisplay">زمان: 25:00</div>
+    </header>
+
+    <!-- بخش مشخصات دانش‌آموز -->
+    <div class="card" id="studentCard">
+        <div class="student-form">
+            <div class="form-group">
+                <label>نام و نام خانوادگی دانش‌آموز:</label>
+                <input type="text" id="studentName" class="form-control" placeholder="نام خود را وارد کنید (اختیاری)">
+            </div>
+            <div class="form-group">
+                <label>نام مدرسه / کلاس:</label>
+                <input type="text" id="studentClass" class="form-control" placeholder="مثلاً: دهم تجربی">
+            </div>
+            <button type="button" class="btn btn-primary" id="startBtn">⏱️ شروع زمان‌سنجی</button>
+        </div>
+        <p id="examIntroNote" style="margin:10px 0 0; font-size:0.85rem; color:var(--secondary); font-weight:bold;">
+            ✅ سوالات در پایین صفحه آماده پاسخ‌گویی هستند. برای ثبت زمان رسمی روی «شروع زمان‌سنجی» کلیک کنید.
+        </p>
+    </div>
+
+    <!-- نوار ابزار مدیریت ویژه دبیر -->
+    <div class="toolbar teacher-only" id="teacherToolbar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary" id="btnToggleAdd">➕ افزودن سوال جدید</button>
+            <button type="button" class="btn btn-outline" id="btnToggleSettings">⚙️ تنظیم زمان و لینک کارنامه</button>
+            <button type="button" class="btn btn-success" id="btnExportStudent">📤 خروجی نسخه دانش‌آموزی</button>
+        </div>
+        <span id="qCountBadge" style="font-weight:bold; color:var(--primary);">تعداد سوالات: ۱۸</span>
+    </div>
+
+    <!-- پنل تنظیمات دبیر -->
+    <div class="card" id="settingsPanel">
+        <h3 style="margin-top:0; color:var(--secondary);">⚙️ تنظیمات برگزاری آنلاین آزمون</h3>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>مدت زمان آزمون (به دقیقه):</label>
+                <input type="number" id="examDurationInput" class="form-control" value="25" min="1" max="180">
+            </div>
+            <div class="form-group">
+                <label>آدرس وب‌هوک یا Google Apps Script (اختیاری):</label>
+                <input type="text" id="webhookUrlInput" class="form-control" style="direction:ltr;" placeholder="https://script.google.com/macros/s/.../exec">
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+            <label>شناسه تلگرام دبیر بدون @ (اختیاری):</label>
+            <input type="text" id="teacherContactInput" class="form-control" style="direction:ltr;" placeholder="مثلاً: rezaei_chemistry">
+        </div>
+        <button type="button" class="btn btn-primary" id="btnSaveSettings">ذخیره تنظیمات</button>
+        <button type="button" class="btn btn-outline" id="btnCloseSettings">بستن</button>
+    </div>
+
+    <!-- پنل افزودن سوال -->
+    <div class="card" id="addPanel">
+        <h3 style="margin-top:0; color:var(--secondary);">➕ افزودن سوال جدید به آزمون</h3>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>نوع سوال:</label>
+                <select id="newType" class="form-control">
+                    <option value="mcq">چهار گزینه‌ای (تستی کنکوری)</option>
+                    <option value="tf">درست / نادرست</option>
+                    <option value="short">پاسخ کوتاه / محاسباتی (عددی)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>مبحث و منبع سوال:</label>
+                <input type="text" id="newTopic" class="form-control" placeholder="مثلاً: جرم اتمی میانگین - کنکور ۱۴۰۲">
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+            <label>متن سوال:</label>
+            <textarea id="newText" class="form-control" rows="2" placeholder="صورت سوال را بنویسید..."></textarea>
+        </div>
+        <div id="dynamicFields"></div>
+        <div class="form-group" style="margin-bottom:12px;">
+            <label>پاسخ تشریحی:</label>
+            <textarea id="newExp" class="form-control" rows="2" placeholder="راهنمای حل سوال..."></textarea>
+        </div>
+        <button type="button" class="btn btn-primary" id="btnAddQuestion">ثبت سوال</button>
+        <button type="button" class="btn btn-outline" id="btnCloseAdd">بستن</button>
+    </div>
+
+    <!-- کارنامه نهایی -->
+    <div class="card" id="resultBox">
+        <h2 style="margin-top:0; color:var(--primary);">📊 کارنامه نهایی آزمون شیمی دهم</h2>
+        <div id="studentSummaryHeader" style="font-weight:bold; margin-bottom:10px; color:var(--secondary);"></div>
+        <div class="stats-grid" id="statsGrid"></div>
+        
+        <div class="report-box">
+            <p style="margin-top:0; font-weight:bold; color:var(--primary);">📩 ارسال کارنامه به استاد:</p>
+            <p id="autoSendStatus" style="font-size:0.88rem; color:var(--muted); margin:5px 0 12px;"></p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button type="button" class="btn btn-primary" id="btnCopyReport">📋 کپی متن کارنامه برای شاد / ایتا / واتساپ</button>
+                <button type="button" class="btn btn-secondary" id="telegramSendBtn">✈️ ارسال مستقیم در تلگرام به استاد</button>
+            </div>
+            <textarea id="reportTextArea" class="form-control" rows="4" readonly style="margin-top:12px; font-size:0.85rem; background:#f8fafc;"></textarea>
+        </div>
+    </div>
+
+    <!-- سوالات آزمون (از همان ابتدا قابل مشاهده و بدون قفل) -->
+    <div id="quizContainer"></div>
+
+    <div id="submitSection" style="text-align:center; margin: 30px 0;">
+        <button type="button" class="btn btn-primary" id="btnSubmitQuiz" style="font-size:1.1rem; padding:14px 36px;">
+            ✅ پایان آزمون و مشاهده کارنامه و پاسخ تشریحی
+        </button>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var examConfig = {
+        durationMinutes: 25,
+        webhookUrl: "",
+        teacherTelegram: "",
+        isStudentOnly: false
+    };
+
+    var questions = [
+        {
+            id: 1,
+            type: 'mcq',
+            topic: 'مهبانگ و پیدایش عناصر',
+            source: 'جزوه طبقه‌بندی - ریاضی ۱۴۰۱',
+            text: 'در باره عنصرهای مشترک زمین و مشتری کدام مورد نادرست است؟',
+            options: [
+                'درصد فراوانی گوگرد، در زمین و مشتری یکسان است.',
+                'از عنصرهای مشترک دو کره می‌توان اکسیژن و گوگرد را نام برد.',
+                'سومین عنصر فراوان در زمین و مشتری، به ترتیب از نوع شبه‌فلز و نافلز است.',
+                'درصد فراوانی آهن در زمین کمتر از ۵۰ درصد، و درصد فراوانی هیدروژن در مشتری بیش از ۵۰ درصد است.'
+            ],
+            answer: 0,
+            explanation: 'درصد فراوانی گوگرد در زمین (حدود ۲ درصد) و مشتری متفاوت است. در زمین اکسیژن، آهن، سیلیسیم (شبه‌فلز) و در مشتری هیدروژن، هلیم و اکسیژن (نافلز) فراوان‌ترین عناصر هستند.'
+        },
+        {
+            id: 2,
+            type: 'mcq',
+            topic: 'عدد اتمی، عدد جرمی و ایزوتوپ',
+            source: 'جزوه طبقه‌بندی - تجربی ۱۴۰۱',
+            text: 'نسبت مجموع شمار ذره‌های زیراتمی در <sup>3</sup>H به مجموع شمار ذره‌های زیراتمی در <sup>2</sup>H چند برابر مجموع شمار ذره‌های زیراتمی در <sup>1</sup>H است؟',
+            options: [
+                '2',
+                '1',
+                '0/5',
+                '0/25'
+            ],
+            answer: 3,
+            explanation: 'در <sup>1</sup>H تعداد ذرات زیراتمی (پروتون + نوترون + الکترون) برابر 2 است. طبق ساختار تست کنکور، نسبت مورد نظر برابر 0/5 به 2 یعنی 0/25 است.'
+        },
+        {
+            id: 3,
+            type: 'mcq',
+            topic: 'ایزوتوپ‌های هیدروژن',
+            source: 'جزوه طبقه‌بندی - سراسری ۹۸',
+            text: 'نسبت شمار نوترون‌ها به شمار پروتون‌ها در سنگین‌ترین ایزوتوپ طبیعی عنصر هیدروژن کدام است؟',
+            options: [
+                '1',
+                '2',
+                '3',
+                '7'
+            ],
+            answer: 1,
+            explanation: 'هیدروژن دارای سه ایزوتوپ طبیعی <sup>1</sup>H، <sup>2</sup>H و <sup>3</sup>H (تریتیم) است. در تریتیم ۱ پروتون و ۲ نوترون وجود دارد؛ پس نسبت نوترون به پروتون برابر ۲ است.'
+        },
+        {
+            id: 4,
+            type: 'mcq',
+            topic: 'ذرات زیراتمی در یون‌ها',
+            source: 'جزوه طبقه‌بندی - تجربی ۱۴۰۱',
+            text: 'اگر در یون پایدار <sup>31</sup>X<sup>3-</sup>، تفاوت شمار نوترون‌ها و الکترون‌ها برابر 2 باشد، تفاوت شمار پروتون(ها) و نوترون(ها) در اتم X کدام است؟',
+            options: [
+                'یک',
+                'دو',
+                'سه',
+                'پنج'
+            ],
+            answer: 0,
+            explanation: 'برای یون پایدار 3- با عدد جرمی 31، عدد اتمی Z=15 (فسفر) است که 18 الکترون و 16 نوترون دارد (18 - 16 = 2). در اتم خنثی 15 پروتون و 16 نوترون وجود دارد که تفاوت آن‌ها برابر ۱ است.'
+        },
+        {
+            id: 5,
+            type: 'mcq',
+            topic: 'ایزوتوپ‌ها و پایداری هسته',
+            source: 'جزوه طبقه‌بندی - ریاضی ۱۴۰۱',
+            text: 'کدام موارد از مطالب زیر درست است؟<br>الف) عنصر، ماده‌ای است که از ایزوتوپ‌های یکسان تشکیل شده باشد.<br>ب) حدود ۸۷ درصد از عنصرهای شناخته‌شده، در طبیعت یافت می‌شوند.<br>پ) حدود ۶ درصد از لیتیم موجود در طبیعت، از سبک‌ترین ایزوتوپ آن تشکیل شده است.<br>ت) اتم‌هایی که نسبت شمار نوترون به پروتون در هسته آن‌ها برابر یا بیش از 1/5 باشد، ناپایداری دارند.',
+            options: [
+                '«الف» و «ت»',
+                '«الف» و «ب»',
+                '«پ» و «ت»',
+                '«ب» و «پ»'
+            ],
+            answer: 2,
+            explanation: 'بند «پ» درست است (فراوانی <sup>6</sup>Li حدود ۶٪ است). بند «ت» نیز طبق کتاب درسی شیمی دهم کاملاً درست است.'
+        },
+        {
+            id: 6,
+            type: 'mcq',
+            topic: 'جرم اتمی میانگین',
+            source: 'جزوه طبقه‌بندی - خارج کشور ۹۸',
+            text: 'عنصر فرضی X دارای دو ایزوتوپ با جرم اتمی 24 amu و 28 amu است که به ترتیب باید با دایره‌های سفید و سیاه نشان داده شوند. اگر جرم اتمی میانگین این عنصر برابر 26/8 amu باشد و در یک نمونه فرضی ۳۰ دایره وجود داشته باشد، چند دایره باید سیاه رنگ باشد؟',
+            options: [
+                '16',
+                '18',
+                '22',
+                '21'
+            ],
+            answer: 3,
+            explanation: 'فراوانی ایزوتوپ سنگین‌تر (28 amu) برابر 70 درصد است. 70 درصد از 30 دایره برابر 21 دایره سیاه می‌شود.'
+        },
+        {
+            id: 7,
+            type: 'mcq',
+            topic: 'جرم اتمی میانگین',
+            source: 'جزوه طبقه‌بندی - دی ۱۴۰۰',
+            text: 'اگر عنصری دارای ایزوتوپ‌هایی با جرم‌های اتمی 28/9 amu، 29/9 amu و 30 amu به ترتیب با فراوانی 92%، 5% و 3% باشد، جرم اتمی میانگین آن برابر چند amu است؟',
+            options: [
+                '29/013',
+                '29/212',
+                '28/983',
+                '29/151'
+            ],
+            answer: 2,
+            explanation: 'M = (28.9 × 0.92) + (29.9 × 0.05) + (30 × 0.03) = 26.588 + 1.495 + 0.900 = 28.983 amu'
+        },
+        {
+            id: 8,
+            type: 'mcq',
+            topic: 'رادیوایزوتوپ‌ها و کاربرد آن',
+            source: 'جزوه طبقه‌بندی - خارج کشور ۹۸',
+            text: 'درباره <sup>99</sup><sub>43</sub>Tc چند مورد از مطالب زیر درست است؟<br>• در تصویربرداری از غده تیروئید کاربرد دارد.<br>• نخستین عنصری است که در واکنشگاه هسته‌ای ساخته شد.<br>• اندازه یون آن درست به اندازه یون یدید است و در تیروئید جذب می‌شود.<br>• زمان ماندگاری آن اندک است و نمی‌توان مقدار زیادی از آن را تولید و انبار کرد.',
+            options: [
+                '1',
+                '2',
+                '3',
+                '4'
+            ],
+            answer: 3,
+            explanation: 'هر ۴ عبارت طبق متن کتاب درسی شیمی دهم درباره رادیوایزوتوپ تکنسیم-۹۹ کاملاً درست هستند.'
+        },
+        {
+            id: 9,
+            type: 'mcq',
+            topic: 'مول، جرم مولی و عدد آووگادرو',
+            source: 'جزوه طبقه‌بندی - سراسری ۱۴۰۰',
+            text: 'در 10 گرم آلومینیم سولفید، به تقریب، چند یون وجود دارد و نسبت جرم گوگرد به جرم آلومینیم در آن کدام است؟ (Al = 27, S = 32 g.mol<sup>-1</sup>)',
+            options: [
+                '2/01 × 10<sup>23</sup> , 32/27',
+                '4/01 × 10<sup>22</sup> , 16/9',
+                '4/01 × 10<sup>22</sup> , 32/27',
+                '2/01 × 10<sup>23</sup> , 16/9'
+            ],
+            answer: 3,
+            explanation: 'فرمول آلومینیم سولفید Al<sub>2</sub>S<sub>3</sub> با جرم مولی 150 g/mol و دارای 5 یون در هر واحد فرمولی است. تعداد یون‌ها = (10/150) × 5 × 6.02×10<sup>23</sup> = 2.01×10<sup>23</sup> و نسبت جرمی گوگرد به آلومینیم = 96/54 = 16/9.'
+        },
+        {
+            id: 10,
+            type: 'mcq',
+            topic: 'محاسبات مولی و فرمول شیمیایی',
+            source: 'جزوه طبقه‌بندی - تجربی ۱۴۰۱',
+            text: 'گوگرد می‌تواند در شرایط معین با فلوئور ترکیبی با فرمول شیمیایی SF<sub>n</sub> تشکیل دهد. اگر 2/92 گرم از فراورده، 12/04 × 10<sup>21</sup> مولکول را در بر داشته باشد، عدد n کدام است؟ (F = 19, S = 32 g.mol<sup>-1</sup>)',
+            options: [
+                '6',
+                '4',
+                '3',
+                '2'
+            ],
+            answer: 0,
+            explanation: 'تعداد مول = 0.02 mol و جرم مولی = 2.92 / 0.02 = 146 g/mol. بنابراین: 32 + 19n = 146 => 19n = 114 => n = 6 (گزینه ۱).'
+        },
+        {
+            id: 11,
+            type: 'mcq',
+            topic: 'نور و طیف‌سنجی',
+            source: 'جزوه طبقه‌بندی - تجربی ۹۸',
+            text: 'کدام موارد از مطالب زیر درست هستند؟<br>آ) طول موج نور بنفش، از طول موج نور سبز کوتاه‌تر است.<br>ب) انرژی هر رنگ نور مرئی، با طول موج آن نسبت مستقیم دارد.<br>پ) نوارهای رنگی در طیف نشری خطی اتم هیدروژن، ناشی از انتقال الکترون از لایه‌های بالاتر به لایه n=2 است.<br>ت) هرچه فاصله لایه‌های انتقال الکترون در اتم برانگیخته هیدروژن بیشتر باشد، طول موج نور بلندتر است.',
+            options: [
+                'ب، پ، ت',
+                'ب',
+                'آ، ب، پ',
+                'آ، پ'
+            ],
+            answer: 3,
+            explanation: 'موارد «آ» و «پ» درست هستند. انرژی با طول موج نسبت عکس دارد (ب نادرست) و فاصله بیشتر لایه‌ها یعنی انرژی بیشتر و طول موج کوتاه‌تر (ت نادرست).'
+        },
+        {
+            id: 12,
+            type: 'mcq',
+            topic: 'طیف نشری خطی عناصر',
+            source: 'جزوه طبقه‌بندی - ریاضی ۹۸',
+            text: 'طیف نشری خطی کدام اتم در ناحیه مرئی، از خطوط بیشتری تشکیل شده است؟',
+            options: [
+                'هلیم',
+                'لیتیم',
+                'نئون',
+                'هیدروژن'
+            ],
+            answer: 2,
+            explanation: 'طیف نشری خطی گاز نئون در ناحیه مرئی دارای بیشترین تعداد خطوط رنگی (به‌ویژه در ناحیه سرخ و نارنجی) است.'
+        },
+        {
+            id: 13,
+            type: 'mcq',
+            topic: 'مدل اتمی بور و نشر نور',
+            source: 'جزوه طبقه‌بندی - ریاضی ۱۴۰۰',
+            text: 'کدام موارد از مطالب زیر درست است؟<br>الف) بور بر اساس مدل اتمی خود توانست طیف نشری خطی عنصرها را توجیه کند.<br>ب) هر نوار رنگی در طیف نشری خطی عنصرها، نوری با انرژی و طول موج معین است.<br>پ) بور با بررسی دقیق طیف نشری خطی اتم هیدروژن، مدلی برای اتم عنصرها ارائه داد.<br>ت) دانشمندان برای توجیه چگونگی نشر نور از اتم عنصرها، ساختار لایه‌ای را برای آن‌ها پیشنهاد کردند.',
+            options: [
+                'الف، ت',
+                'ب، ت',
+                'پ، ت',
+                'الف، ب'
+            ],
+            answer: 1,
+            explanation: 'مدل بور فقط برای اتم هیدروژن (تک‌الکترونی) موفق بود (الف و پ نادرست). موارد «ب» و «ت» کاملاً درست هستند.'
+        },
+        {
+            id: 14,
+            type: 'mcq',
+            topic: 'جذب و نشر انرژی در اتم هیدروژن',
+            source: 'جزوه طبقه‌بندی - تجربی ۹۹',
+            text: 'کدام مطلب درباره اتم درست است؟',
+            options: [
+                'با دور شدن الکترون از هسته، انرژی آن کاهش می‌یابد.',
+                'در همه اتم‌ها، تراز انرژی n=1 حالت پایه به شمار می‌آید.',
+                'در طیف نشری خطی اتم هیدروژن، کمترین مقدار انرژی به نوار زرد رنگ مربوط است.',
+                'الکترون در حالت برانگیخته ناپایدار است و با از دست دادن انرژی، همواره به حالت پایه باز نمی‌گردد.'
+            ],
+            answer: 3,
+            explanation: 'الکترون برانگیخته ممکن است به جای بازگشت مستقیم به n=1، ابتدا به لایه‌های میانی (مثل n=2 یا n=3) منتقل شود.'
+        },
+        {
+            id: 15,
+            type: 'mcq',
+            topic: 'انتقال‌های الکترونی در مدل بور',
+            source: 'جزوه طبقه‌بندی - تجربی ۱۴۰۱',
+            text: 'کدام مورد درست است؟',
+            options: [
+                'یکی از راه‌های تعیین آرایش الکترونی، برانگیخته کردن اتم و بررسی پرتوهای گسیل‌شده از آن است.',
+                'در اتم هیدروژن، تفاوت انرژی الکترون‌ها در دو لایه متوالی با نزدیک شدن لایه‌ها به هسته، کاهش می‌یابد.',
+                'اگر به اتم‌های گازی شکل یک عنصر انرژی داده شود، الکترون می‌تواند با جذب هر مقدار انرژی به لایه‌های بالاتر انتقال یابد.',
+                'در اتم هیدروژن، انرژی آزاد شده انتقال الکترون از لایه چهارم به لایه دوم، بیشتر از انرژی آزاد شده انتقال الکترون از لایه پنجم به لایه دوم است.'
+            ],
+            answer: 0,
+            explanation: 'گزینه ۱ عین متن کتاب درسی شیمی دهم است.'
+        },
+        {
+            id: 16,
+            type: 'tf',
+            topic: 'آزمون شعله و طیف‌سنجی',
+            source: 'سوال تالیفی (درست / نادرست)',
+            text: 'درستی یا نادرستی عبارت زیر را مشخص کنید: «رنگ شعله مس(II) سولفات و مس(II) نیترات مشابه است، اما رنگ شعله لیتیم نیترات و لیتیم سولفات به دلیل تفاوت در نوع آنیون متفاوت است.»',
+            options: ['درست', 'نادرست'],
+            answer: 1,
+            explanation: 'نادرست! رنگ شعله به نوع کاتیون فلزی بستگی دارد و مستقل از نوع آنیون است.'
+        },
+        {
+            id: 17,
+            type: 'short',
+            topic: 'محاسبات جرم اتمی میانگین',
+            source: 'جزوه طبقه‌بندی - تجربی ۱۴۰۱ (پاسخ عددی)',
+            text: 'جرم اتمی میانگین عنصری با دو ایزوتوپ برابر 27/2 amu است. اگر تفاوت جرم دو ایزوتوپ برابر 2 واحد و درصد فراوانی ایزوتوپ سنگین‌تر 40 درصد باشد، جرم اتمی ایزوتوپ سنگین‌تر چند amu است؟ (عدد را وارد کنید)',
+            answer: '28.4',
+            explanation: '0.6M + 0.4(M+2) = 27.2 => M = 26.4. جرم ایزوتوپ سنگین‌تر = 26.4 + 2 = 28.4 amu.'
+        },
+        {
+            id: 18,
+            type: 'short',
+            topic: 'محاسبات مول و شمار ذرات',
+            source: 'جزوه طبقه‌بندی - ریاضی ۱۴۰۱ (پاسخ عددی)',
+            text: 'شمار اتم‌ها در 3 گرم گاز هیدروژن (H<sub>2</sub>)، برابر با شمار اتم‌ها در چند گرم گاز آرگون است؟ (H = 1, Ar = 40 g.mol<sup>-1</sup> - عدد را وارد کنید)',
+            answer: '120',
+            explanation: '3 گرم H2 برابر 1.5 مول مولکول و 3 مول اتم H است. جرم 3 مول آرگون تک‌اتمی = 3 × 40 = 120 گرم.'
+        }
+    ];
+
+    var remainingSeconds = examConfig.durationMinutes * 60;
+    var timerInterval = null;
+    var isStarted = false;
+    var isSubmitted = false;
+
+    function updateTimerDisplay() {
+        var mins = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
+        var secs = String(remainingSeconds % 60).padStart(2, '0');
+        var el = document.getElementById('timerDisplay');
+        el.textContent = 'زمان: ' + mins + ':' + secs;
+        if (remainingSeconds <= 120 && isStarted && !isSubmitted) {
+            el.classList.add('urgent');
+        }
+    }
+
+    function renderQuiz() {
+        var container = document.getElementById('quizContainer');
+        container.innerHTML = '';
+        document.getElementById('qCountBadge').textContent = 'تعداد سوالات: ' + questions.length;
+
+        questions.forEach(function(q, idx) {
+            var card = document.createElement('div');
+            card.className = 'card';
+
+            var typeLabel = q.type === 'mcq' ? 'چهار گزینه‌ای' : (q.type === 'tf' ? 'درست / نادرست' : 'محاسباتی / پاسخ کوتاه');
+            var inputHTML = '';
+
+            if (q.type === 'mcq' || q.type === 'tf') {
+                inputHTML = '<div class="options-list">' + q.options.map(function(opt, oIdx) {
+                    return '<label class="option-item" id="opt-' + idx + '-' + oIdx + '">' +
+                        '<input type="radio" name="q_' + idx + '" value="' + oIdx + '" ' + (isSubmitted ? 'disabled' : '') + '>' +
+                        '<span>' + opt + '</span>' +
+                    '</label>';
+                }).join('') + '</div>';
+            } else {
+                inputHTML = '<div>' +
+                    '<input type="text" class="short-input" id="short_' + idx + '" placeholder="پاسخ عددی را بنویسید..." ' + (isSubmitted ? 'disabled' : '') + '>' +
+                    '<div id="short-feedback-' + idx + '" style="margin-top:8px; font-weight:bold;"></div>' +
+                '</div>';
+            }
+
+            card.innerHTML =
+                '<div class="q-header">' +
+                    '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
+                        '<span class="q-badge">سوال ' + (idx + 1) + ' (' + typeLabel + ')</span>' +
+                        '<span style="font-size:0.82rem; color:var(--muted);">مبحث: ' + q.topic + '</span>' +
+                        (q.source ? '<span class="q-source">' + q.source + '</span>' : '') +
+                    '</div>' +
+                    '<button type="button" class="btn btn-danger teacher-only" data-del-idx="' + idx + '">حذف</button>' +
+                '</div>' +
+                '<div class="q-text">' + q.text + '</div>' +
+                inputHTML +
+                '<div class="explanation" id="exp-' + idx + '">' +
+                    '<strong>پاسخ تشریحی:</strong> ' + q.explanation +
+                '</div>';
+            container.appendChild(card);
+        });
+
+        var delButtons = container.querySelectorAll('[data-del-idx]');
+        delButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var idx = parseInt(this.getAttribute('data-del-idx'), 10);
+                questions.splice(idx, 1);
+                renderQuiz();
+            });
+        });
+    }
+
+    function startTimer() {
+        if (isStarted || isSubmitted) return;
+        isStarted = true;
+        var startBtn = document.getElementById('startBtn');
+        startBtn.disabled = true;
+        startBtn.textContent = '⏱️ زمان‌سنج فعال است';
+        remainingSeconds = examConfig.durationMinutes * 60;
+        timerInterval = setInterval(function() {
+            if (!isSubmitted) {
+                remainingSeconds--;
+                updateTimerDisplay();
+                if (remainingSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }
+        }, 1000);
+    }
+
+    function toEnglishDigits(str) {
+        return str.replace(/[۰-۹]/g, function(d) {
+            return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d);
+        }).replace('/', '.');
+    }
+
+    function submitQuiz() {
+        if (isSubmitted) return;
+        isSubmitted = true;
+        if (timerInterval) clearInterval(timerInterval);
+        document.getElementById('submitSection').style.display = 'none';
+
+        var correct = 0, wrong = 0, blank = 0;
+        var answersSummary = [];
+
+        questions.forEach(function(q, idx) {
+            var expEl = document.getElementById('exp-' + idx);
+            if (expEl) expEl.classList.add('show');
+
+            if (q.type === 'mcq' || q.type === 'tf') {
+                var selected = document.querySelector('input[name="q_' + idx + '"]:checked');
+                var correctOpt = document.getElementById('opt-' + idx + '-' + q.answer);
+                if (correctOpt) correctOpt.classList.add('correct-ans');
+
+                document.querySelectorAll('input[name="q_' + idx + '"]').forEach(function(inp) {
+                    inp.disabled = true;
+                });
+
+                if (!selected) {
+                    blank++;
+                    answersSummary.push('س' + (idx + 1) + ': نزده');
+                } else {
+                    var val = parseInt(selected.value, 10);
+                    if (val === q.answer) {
+                        correct++;
+                        answersSummary.push('س' + (idx + 1) + ': ✅(' + (val + 1) + ')');
+                    } else {
+                        wrong++;
+                        var wrongOpt = document.getElementById('opt-' + idx + '-' + val);
+                        if (wrongOpt) wrongOpt.classList.add('wrong-ans');
+                        answersSummary.push('س' + (idx + 1) + ': ❌(' + (val + 1) + ')');
+                    }
+                }
+            } else {
+                var inputEl = document.getElementById('short_' + idx);
+                var fbEl = document.getElementById('short-feedback-' + idx);
+                inputEl.disabled = true;
+                var userVal = toEnglishDigits(inputEl.value.trim());
+
+                if (!userVal) {
+                    blank++;
+                    fbEl.innerHTML = '<span style="color:var(--muted);">پاسخ داده نشد | پاسخ صحیح: ' + q.answer + '</span>';
+                    answersSummary.push('س' + (idx + 1) + ': نزده');
+                } else if (parseFloat(userVal) === parseFloat(q.answer) || userVal === q.answer) {
+                    correct++;
+                    inputEl.style.borderColor = 'var(--success)';
+                    inputEl.style.backgroundColor = 'var(--success-bg)';
+                    fbEl.innerHTML = '<span style="color:var(--success);">✅ صحیح (' + q.answer + ')</span>';
+                    answersSummary.push('س' + (idx + 1) + ': ✅(' + userVal + ')');
+                } else {
+                    wrong++;
+                    inputEl.style.borderColor = 'var(--danger)';
+                    inputEl.style.backgroundColor = 'var(--danger-bg)';
+                    fbEl.innerHTML = '<span style="color:var(--danger);">❌ نادرست | پاسخ صحیح: ' + q.answer + '</span>';
+                    answersSummary.push('س' + (idx + 1) + ': ❌(' + userVal + ')');
+                }
+            }
+        });
+
+        var total = questions.length;
+        var rawPercent = total > 0 ? ((correct / total) * 100).toFixed(1) : '0.0';
+        var negPercent = total > 0 ? ((((correct * 3) - wrong) / (total * 3)) * 100).toFixed(1) : '0.0';
+        var sName = document.getElementById('studentName').value.trim() || 'دانش‌آموز مهمان';
+        var sClass = document.getElementById('studentClass').value.trim() || 'ثبت نشده';
+        var nowTime = new Date().toLocaleString('fa-IR');
+
+        document.getElementById('studentSummaryHeader').textContent = 'داوطلب: ' + sName + ' | کلاس: ' + sClass + ' | زمان ثبت: ' + nowTime;
+        document.getElementById('statsGrid').innerHTML =
+            '<div class="stat-card"><div class="stat-val" style="color:var(--success)">' + correct + '</div><div class="stat-lbl">صحیح</div></div>' +
+            '<div class="stat-card"><div class="stat-val" style="color:var(--danger)">' + wrong + '</div><div class="stat-lbl">غلط</div></div>' +
+            '<div class="stat-card"><div class="stat-val" style="color:var(--muted)">' + blank + '</div><div class="stat-lbl">نزده</div></div>' +
+            '<div class="stat-card"><div class="stat-val">' + rawPercent + '%</div><div class="stat-lbl">درصد خام</div></div>' +
+            '<div class="stat-card"><div class="stat-val">' + negPercent + '%</div><div class="stat-lbl">درصد کنکوری</div></div>';
+
+        var reportText = '🧪 کارنامه آزمون آنلاین شیمی دهم (استاد رضایی)\n' +
+            '👤 نام دانش‌آموز: ' + sName + '\n' +
+            '🏫 کلاس/مدرسه: ' + sClass + '\n' +
+            '📊 صحیح: ' + correct + ' | غلط: ' + wrong + ' | نزده: ' + blank + ' (از ' + total + ' سوال)\n' +
+            '🎯 درصد کنکوری (با نمره منفی): ' + negPercent + '% | درصد خام: ' + rawPercent + '%\n' +
+            '🕒 زمان ثبت: ' + nowTime + '\n' +
+            '📝 ریز پاسخ‌ها: ' + answersSummary.join(' ، ');
+
+        document.getElementById('reportTextArea').value = reportText;
+
+        if (!examConfig.teacherTelegram) {
+            document.getElementById('telegramSendBtn').style.display = 'none';
+        }
+
+        if (examConfig.webhookUrl && window.location.protocol !== 'file:') {
+            document.getElementById('autoSendStatus').textContent = '⏳ در حال ارسال خودکار کارنامه به سامانه دبیر...';
+            fetch(examConfig.webhookUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: sName,
+                    className: sClass,
+                    correct: correct, wrong: wrong, blank: blank, total: total,
+                    rawPercent: rawPercent, negPercent: negPercent,
+                    time: nowTime,
+                    details: answersSummary.join(' | ')
+                })
+            }).then(function() {
+                document.getElementById('autoSendStatus').innerHTML = '<span style="color:var(--success); font-weight:bold;">✅ کارنامه با موفقیت ثبت شد!</span>';
+            }).catch(function() {
+                document.getElementById('autoSendStatus').textContent = 'لطفاً متن کارنامه زیر را کپی کرده و برای استاد بفرستید.';
+            });
+        } else {
+            document.getElementById('autoSendStatus').textContent = 'با دکمه زیر کارنامه را کپی کرده و در پیام‌رسان برای استاد ارسال نمایید:';
+        }
+
+        var resBox = document.getElementById('resultBox');
+        resBox.style.display = 'block';
+        resBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderNewQuestionFields() {
+        var type = document.getElementById('newType').value;
+        var box = document.getElementById('dynamicFields');
+        if (type === 'mcq') {
+            box.innerHTML =
+                '<div class="grid-2">' +
+                    '<div class="form-group"><label>گزینه ۱:</label><input type="text" id="opt0" class="form-control"></div>' +
+                    '<div class="form-group"><label>گزینه ۲:</label><input type="text" id="opt1" class="form-control"></div>' +
+                    '<div class="form-group"><label>گزینه ۳:</label><input type="text" id="opt2" class="form-control"></div>' +
+                    '<div class="form-group"><label>گزینه ۴:</label><input type="text" id="opt3" class="form-control"></div>' +
+                '</div>' +
+                '<div class="form-group" style="margin-bottom:12px;">' +
+                    '<label>گزینه صحیح:</label>' +
+                    '<select id="correctIdx" class="form-control">' +
+                        '<option value="0">گزینه ۱</option>' +
+                        '<option value="1">گزینه ۲</option>' +
+                        '<option value="2">گزینه ۳</option>' +
+                        '<option value="3">گزینه ۴</option>' +
+                    '</select>' +
+                '</div>';
+        } else if (type === 'tf') {
+            box.innerHTML =
+                '<div class="form-group" style="margin-bottom:12px;">' +
+                    '<label>پاسخ صحیح:</label>' +
+                    '<select id="correctIdx" class="form-control">' +
+                        '<option value="0">درست</option>' +
+                        '<option value="1">نادرست</option>' +
+                    '</select>' +
+                '</div>';
+        } else {
+            box.innerHTML =
+                '<div class="form-group" style="margin-bottom:12px;">' +
+                    '<label>پاسخ عددی صحیح:</label>' +
+                    '<input type="text" id="correctShort" class="form-control" style="direction:ltr;">' +
+                '</div>';
+        }
+    }
+
+    // اتصال رویدادها (بدون وابستگی به inline onclick و بدون ایجاد خطای CORS در حالت آفلاین)
+    document.getElementById('startBtn').addEventListener('click', startTimer);
+    document.getElementById('btnSubmitQuiz').addEventListener('click', submitQuiz);
+
+    document.getElementById('btnToggleAdd').addEventListener('click', function() {
+        var p = document.getElementById('addPanel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        if (p.style.display === 'block') renderNewQuestionFields();
+    });
+    document.getElementById('btnCloseAdd').addEventListener('click', function() {
+        document.getElementById('addPanel').style.display = 'none';
+    });
+
+    document.getElementById('btnToggleSettings').addEventListener('click', function() {
+        var p = document.getElementById('settingsPanel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    });
+    document.getElementById('btnCloseSettings').addEventListener('click', function() {
+        document.getElementById('settingsPanel').style.display = 'none';
+    });
+
+    document.getElementById('btnSaveSettings').addEventListener('click', function() {
+        var dur = parseInt(document.getElementById('examDurationInput').value, 10);
+        if (dur > 0) examConfig.durationMinutes = dur;
+        examConfig.webhookUrl = document.getElementById('webhookUrlInput').value.trim();
+        examConfig.teacherTelegram = document.getElementById('teacherContactInput').value.trim().replace('@', '');
+        remainingSeconds = examConfig.durationMinutes * 60;
+        updateTimerDisplay();
+        document.getElementById('settingsPanel').style.display = 'none';
+    });
+
+    document.getElementById('newType').addEventListener('change', renderNewQuestionFields);
+
+    document.getElementById('btnAddQuestion').addEventListener('click', function() {
+        var type = document.getElementById('newType').value;
+        var topic = document.getElementById('newTopic').value.trim() || 'شیمی دهم';
+        var text = document.getElementById('newText').value.trim();
+        var explanation = document.getElementById('newExp').value.trim() || 'توضیحی ثبت نشده است.';
+        if (!text) return;
+
+        var newQ = { id: Date.now(), type: type, topic: topic, source: 'افزوده‌شده توسط دبیر', text: text, explanation: explanation };
+        if (type === 'mcq') {
+            var opts = [0,1,2,3].map(function(i) { return document.getElementById('opt' + i).value.trim(); });
+            if (opts.some(function(o) { return !o; })) return;
+            newQ.options = opts;
+            newQ.answer = parseInt(document.getElementById('correctIdx').value, 10);
+        } else if (type === 'tf') {
+            newQ.options = ['درست', 'نادرست'];
+            newQ.answer = parseInt(document.getElementById('correctIdx').value, 10);
+        } else {
+            var ans = document.getElementById('correctShort').value.trim();
+            if (!ans) return;
+            newQ.answer = ans;
+        }
+
+        questions.push(newQ);
+        document.getElementById('newText').value = '';
+        document.getElementById('newExp').value = '';
+        document.getElementById('addPanel').style.display = 'none';
+        renderQuiz();
+    });
+
+    document.getElementById('btnCopyReport').addEventListener('click', function() {
+        var ta = document.getElementById('reportTextArea');
+        ta.select();
+        ta.setSelectionRange(0, 99999);
+        try {
+            document.execCommand('copy');
+            if (navigator.clipboard) navigator.clipboard.writeText(ta.value);
+            this.textContent = '✅ کپی شد!';
+            var self = this;
+            setTimeout(function() { self.textContent = '📋 کپی متن کارنامه برای شاد / ایتا / واتساپ'; }, 2000);
+        } catch (e) {}
+    });
+
+    document.getElementById('telegramSendBtn').addEventListener('click', function() {
+        if (!examConfig.teacherTelegram) return;
+        var text = encodeURIComponent(document.getElementById('reportTextArea').value);
+        window.open('https://t.me/' + examConfig.teacherTelegram + '?text=' + text, '_blank');
+    });
+
+    document.getElementById('btnExportStudent').addEventListener('click', function() {
+        var studentConfig = {
+            durationMinutes: examConfig.durationMinutes,
+            webhookUrl: examConfig.webhookUrl,
+            teacherTelegram: examConfig.teacherTelegram,
+            isStudentOnly: true
+        };
+        var htmlDoc = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        htmlDoc = htmlDoc.replace(
+            /var examConfig = \{[\s\S]*?\};/,
+            'var examConfig = ' + JSON.stringify(studentConfig, null, 4) + ';'
+        );
+        htmlDoc = htmlDoc.replace(
+            /var questions = \[[\s\S]*?\];/,
+            'var questions = ' + JSON.stringify(questions, null, 4) + ';'
+        );
+        var blob = new Blob([htmlDoc], { type: 'text/html;charset=utf-8' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'azmoon-shimi10-student.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+
+    // اجرای اولیه بلافاصله پس از بارگذاری صفحه
+    if (examConfig.isStudentOnly) {
+        document.body.classList.add('student-mode');
+    }
+    updateTimerDisplay();
+    renderQuiz();
+});
+</script>
+</body>
+</html>
